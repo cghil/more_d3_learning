@@ -1,0 +1,21 @@
+text {
+	font-size: 10px;
+}
+
+g > text.active {
+	font-size: 30px;
+}
+
+circle {
+	fill: pink;
+	stroke: black;
+	stroke-width: 1px;
+}
+
+circle.active{
+	fill: red;
+}
+
+circle.inactive {
+	fill: gray;
+}
