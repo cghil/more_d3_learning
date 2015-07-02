@@ -1,7 +1,6 @@
 function createSoccerViz(){
 	d3.csv("world_cup.csv", function(data){
 		overallTeamViz(data);
-		console.log(data)
 	})
 
 	function overallTeamViz(incomingData){
@@ -22,9 +21,6 @@ function createSoccerViz(){
 
 		teamG
 			.append("circle").attr("r", 0)
-			.style("fill", "pink")
-			.style("stroke", "black")
-			.style("stroke-width", "1px")
 			.transition()
 			.delay(function(d, i){ return i *100})
 			.duration(500)
@@ -37,7 +33,6 @@ function createSoccerViz(){
 			.append('text')
 			.style("text-anchor", "middle")
 			.attr("y", 30)
-			.style("font-size", "10px")
 			.text(function(d){
 				return d.team
 			})
@@ -53,38 +48,64 @@ function createSoccerViz(){
 			.on("click", buttonClick) // registers an onclick behavior for each button with a wrapper
 			// that gives access to the data that was bound to it when it was created
 			.html(function(d){
-				console.log(d)
 				return d;
 			}) // remember that dataKeys consits of an array of attribute names, so the d corresponds to
 			// one of those names and makes a good button title
 
 		function buttonClick(datapoint){
 			//remember that the data has been bound to the button via the data() function
-			console.log(datapoint) 
 			var maxValue = d3.max(incomingData, function(d){ return parseFloat(d[datapoint])}) 
 			// the function each button is calling on click, with the bound data sent automatically as the first arguement
+
+			var tenColorScale = d3.scale.category10( ["UEFA", "CONMEBOL", "CAF", "AFC"]);
 
 			var radiusScale = d3.scale.linear()
 				.domain([0, maxValue]).range([2, 20])
 
+			var ybRamp = d3.scale.linear()
+				.interpolate(d3.interpolateLab)
+				.domain([0, maxValue]).range(["yellow", "blue"])
+
 			d3.selectAll("g.overallG").select("circle").transition().duration(1000)
-				.attr("r", function(d){return radiusScale(d[datapoint])});
+				.style("fill", function(p){
+					return tenColorScale(p.region)
+				})
+				.attr("r", function(d){return radiusScale(d[datapoint])})
 		};
 
-		teamG.on("mouseover", highlightRegion);
-		function highlightRegion(d){
+		// teamG.on("mouseover", highlightRegion);
+		teamG.on("mouseover", highlightRegion2);
+		// function highlightRegion(d){
+		// 	d3.selectAll("g.overallG").select("circle")
+		// 		.style("fill", function(p){
+		// 			return p.region == d.region ? "red" : "gray"
+		// 		})
+		// 	//we used d as our variable
+		// 	// we changed the inline function to p, so that it wouldn't conflict.
+		// 	// then we use an "ifsie" an inline if statement that compares the region to each element
+		// };
+
+		function highlightRegion2(d, i){
+			var teamColor = d3.rgb("pink")
+			d3.select(this).select("text").classed("active", true).attr("y", 10);
 			d3.selectAll("g.overallG").select("circle")
 				.style("fill", function(p){
-					return p.region == d.region ? "red" : "gray"
+					return p.region == d.region ?
+						teamColor.darker(.75) : teamColor.brighter(.5)
 				})
-			//we used d as our variable
-			// we changed the inline function to p, so that it wouldn't conflict.
-			// then we use an "ifsie" an inline if statement that compares the region to each element
+			;
+			this.parentElement.appendChild(this)
 		};
 
-		teamG.on("mouseout", function(){
-			d3.selectAll("g.overallG").select("circle").style("fill", "pink")
-		})
+		teamG.on("mouseout", unHighlight)
+
+		function unHighlight() {
+ 			d3.selectAll("g.overallG").select("circle").attr("class", "");
+ 			d3.selectAll("g.overallG").select("text")
+			.classed("active", false).attr("y", 30);
+		};
+
+		teamG.select("text").style("pointer-events","none");
 
 	}
 }
