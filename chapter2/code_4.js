@@ -45,8 +45,17 @@ function dataViz(incomingData){
 		.style("stroke-width", "1px")
 	// old data is leave behind when selecting the same elements again
 	var filteredData = incomingData.filter(
-		function(el) { return el.impact > 0}
+		function(tweet) { return tweet.impact > 0}
 	);
 
+	// we are filtering out the tweeter data to only so impacts scores higher than 0
+
 	console.log(filteredData)
+
+	d3.selectAll("circle")
+		.data(filteredData, function(d){
+			return JSON.stringify(d)
+		})
+		.exit()
+		.remove();
 };
