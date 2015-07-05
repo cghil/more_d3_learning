@@ -17,7 +17,7 @@ function createSoccerViz(){
 				return "translate(" + (i * 50) + ", 0)"
 			}); // create a g for each team to add labels or otehr elements as we get more ambitious
 
-		var teamG = d3.selectAll("g.overallG");
+		var teamG = d3.selectAll("g.overallG").on("click", teamClick);
 
 		teamG
 			.append("circle").attr("r", 0)
@@ -96,6 +96,16 @@ function createSoccerViz(){
 		};
 
 		teamG.select("text").style("pointer-events","none");
+		
+		d3.text("modal.html", function(data) {d3.select("body").append("div").attr("id", "modal").html(data)});
+		// creates a new div with an id of modal
+		// populates it with HTML content from modal.html
+		// we wanted to use .text() because it is more convenient to load the raw HTML code like this and drop it into the .html()
+		function teamClick(d) {
+  		d3.selectAll("td.data").data(d3.values(d)).html(function(p) {return p})
+		}
+		// selected the rows for data
+		// updates the td.data elements with the values of the team clicked
+	};
 
-	}
 }
