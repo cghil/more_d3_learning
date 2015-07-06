@@ -23,9 +23,29 @@ var yExtent = d3.extent(scatterData, function(d){
 // min and max array for friends
 
 // the function d3.extent returns and array with the max and min values
-var xScale = d3.scale.linear().domain(xExtent).range([0, 500]);
+var xScale = d3.scale.linear().domain([0, 180000]).range([0, 500]);
 
-var yScale = d3.scale.linear().domain(yExtent).range([0, 500]);
+var yScale = d3.scale.linear().domain([0, 27]).range([0, 500]);
+
+
+
+yAxis = d3.svg.axis().scale(yScale)
+          .orient("right").ticks(16).tickSize(500);
+          
+d3.select("svg").append("g").attr("id", "yAxisG").call(yAxis);
+
+xAxis = d3.svg.axis().scale(xScale)
+          .orient("bottom").tickSize(500).ticks(4);
+
+d3.select("svg").append("g").attr("id", "xAxisG").call(xAxis);
+
+// .call()
+
+
+// d3.selectAll("path.domain").style("fill", "none").style("stroke", "black");
+// we use selectAll because there are two of these paths, one for each axis we called
+// d3.selectAll("line").style("stroke", "black")
+// we'll want to be more specific in the future "line.tick" because it's likely that whatever we're working on will have more lines than thos used in our axes.
 
 
 d3.select("svg").selectAll("circle")
@@ -35,13 +55,3 @@ d3.select("svg").selectAll("circle")
 	}).attr("cy", function(d){
 		return yScale(d.friends)
 	})
-
-var yAxis = d3.svg.axis().scale(yScale).orient("right");
-// we are creating an axis that will have tick marks from the min friends 0 to the max friends 27
-// then we orient that axis
-d3.select("svg").append("g").attr("id", "yAxisG").call(yAxis);
-
-var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
-d3.select("svg").append("g").attr("id", "xAxisG").call(xAxis);
-
-// .call()
