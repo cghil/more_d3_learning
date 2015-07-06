@@ -37,6 +37,8 @@ d3.select("svg").selectAll("circle")
 	})
 
 var yAxis = d3.svg.axis().scale(yScale).orient("right");
+// we are creating an axis that will have tick marks from the min friends 0 to the max friends 27
+// then we orient that axis
 d3.select("svg").append("g").attr("id", "yAxisG").call(yAxis);
 
 var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
